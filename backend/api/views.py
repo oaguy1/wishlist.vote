@@ -1,22 +1,42 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import permissions, viewsets
 
-from .serializers import UserSerializer, GroupSerializer
+from .models import ListItem, Wishlist
+from .permissions import IsCreatorOrReadOnly
+from .serializers import ListItemSerializer, UserSerializer, GroupSerializer, WishlistSerializer
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows users to be viewed or edited
+    API endpoints that allows users to be viewed or edited
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class GroupViewSet(viewsets.ModelViewSet):
+class GroupViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    API endpoint that allows groups to be viewed or edited
+    API endpoints that allows groups to be viewed or edited
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAdminUser]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class WishlistViewSet(viewsets.ModelViewSet):
+    """
+    API endpoints that allows CRUD on lists
+    """
+    queryset = Wishlist.objects.all()
+    serializer_class = WishlistSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsCreatorOrReadOnly]
+
+
+class ListItemViewSet(viewsets.ModelViewSet):
+    """
+    API endpoints that allows CRUD on list items
+    """
+    queryset = ListItem.objects.all()
+    serializer_class = ListItemSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsCreatorOrReadOnly]
