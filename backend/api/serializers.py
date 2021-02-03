@@ -21,15 +21,16 @@ class WishlistSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['url', 'slug', 'name', 'description', 'created_by', 'created_at', 'updated_at']
 
 
+class ListItemSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = ListItem
+        fields = ['url', 'name', 'description', 'wishlist', 'created_by', 'created_at', 'updated_at']
+
+
 class WishlistDetailSerializer(serializers.HyperlinkedModelSerializer):
-    list_items = serializers.PrimaryKeyRelatedField(many=True, queryset=ListItem.objects.all())
+    list_items = ListItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = Wishlist
         fields = ['url', 'slug', 'name', 'description', 'created_by', 'created_at', 'updated_at', 'list_items']
 
-
-class ListItemSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = ListItem
-        fields = ['url', 'name', 'description', 'wishlist', 'created_by', 'created_at', 'updated_at']

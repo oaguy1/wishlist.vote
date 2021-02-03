@@ -3,7 +3,7 @@ from rest_framework import permissions, viewsets
 
 from .models import ListItem, Wishlist
 from .permissions import IsCreatorOrReadOnly
-from .serializers import ListItemSerializer, UserSerializer, GroupSerializer, WishlistSerializer
+from .serializers import ListItemSerializer, UserSerializer, GroupSerializer, WishlistDetailSerializer, WishlistSerializer
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -31,6 +31,12 @@ class WishlistViewSet(viewsets.ModelViewSet):
     queryset = Wishlist.objects.all()
     serializer_class = WishlistSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsCreatorOrReadOnly]
+    
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return WishlistSerializer
+        else:
+            return WishlistDetailSerializer
 
 
 class ListItemViewSet(viewsets.ModelViewSet):

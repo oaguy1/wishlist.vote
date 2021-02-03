@@ -17,7 +17,7 @@ class Wishlist(BaseModel):
     Model representing a list
     """
     name = models.CharField(max_length=256)
-    slug = models.CharField(max_length=64)
+    slug = models.SlugField(max_length=32)
     description = models.TextField(blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -28,7 +28,7 @@ class ListItem(BaseModel):
     """
     Model representing an item in a list
     """
-    wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE, related_name="wishlist")
+    wishlist = models.ForeignKey(Wishlist, on_delete=models.CASCADE, related_name="list_items")
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=256)
     description = models.TextField()
