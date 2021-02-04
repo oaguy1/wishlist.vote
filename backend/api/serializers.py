@@ -25,10 +25,10 @@ class ListItemSerializer(serializers.HyperlinkedModelSerializer):
     upvote_count = serializers.SerializerMethodField()
     can_upvote = serializers.SerializerMethodField()
 
-    def get_upvote_count(self, obj):
+    def get_upvote_count(self, obj: dict):
         return Upvote.objects.filter(list_item=obj.id).count()
 
-    def get_can_upvote(self, obj):
+    def get_can_upvote(self, obj: dict):
         # https://stackoverflow.com/questions/27934822/get-current-user-in-model-serializer
         request = self.context.get('request', None)
 
