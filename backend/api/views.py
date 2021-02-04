@@ -1,9 +1,14 @@
 from django.contrib.auth.models import User, Group
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, status
+from rest_framework import response
+from rest_framework.decorators import action
+from rest_framework.request import Request
+from rest_framework.response import Response
 
-from .models import ListItem, Wishlist
+from .models import ListItem, Upvote, Wishlist
 from .permissions import IsCreatorOrReadOnly
-from .serializers import ListItemSerializer, UserSerializer, GroupSerializer, WishlistDetailSerializer, WishlistSerializer
+from .serializers import ListItemSerializer, UpvoteSerializer, UserSerializer, GroupSerializer
+from .serializers import WishlistDetailSerializer, WishlistSerializer
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -46,3 +51,17 @@ class ListItemViewSet(viewsets.ModelViewSet):
     queryset = ListItem.objects.all()
     serializer_class = ListItemSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsCreatorOrReadOnly]
+
+    @action(detail=True, methods=['post'])
+    def upvote(self, request: Request, pk: int = None):
+        upvote_data = {
+            'user': request.user.id, 
+            'list_item': self.get_object().id
+        }
+        upvote = UpvoteSerializer(data=upvote_data)
+            
+        if upvote.is_valid():
+            upvote.save()
+            return Response({'status': 'created'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(upvote.errors, status.HTTP_400_BAD_REQUEST)

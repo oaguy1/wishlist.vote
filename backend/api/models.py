@@ -45,3 +45,6 @@ class Upvote(BaseModel):
 
     def __str__(self):
         return f"{self.user.id}:{self.list_item.id}" 
+
+    class Meta:
+        unique_together = ('user', 'list_item')

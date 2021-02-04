@@ -34,3 +34,7 @@ class WishlistDetailSerializer(serializers.HyperlinkedModelSerializer):
         model = Wishlist
         fields = ['url', 'slug', 'name', 'description', 'created_by', 'created_at', 'updated_at', 'list_items']
 
+class UpvoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Upvote
+        fields = ['user', 'list_item']
