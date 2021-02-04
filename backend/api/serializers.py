@@ -23,14 +23,24 @@ class WishlistSerializer(serializers.HyperlinkedModelSerializer):
 
 class ListItemSerializer(serializers.HyperlinkedModelSerializer):
     upvote_count = serializers.SerializerMethodField()
+    can_upvote = serializers.SerializerMethodField()
 
     def get_upvote_count(self, obj):
         return Upvote.objects.filter(list_item=obj.id).count()
 
+    def get_can_upvote(self, obj):
+        # https://stackoverflow.com/questions/27934822/get-current-user-in-model-serializer
+        request = self.context.get('request', None)
+
+        if request and request.user.id:
+            return Upvote.objects.filter(list_item=obj.id, user=request.user.id).count() == 0
+        else:
+            return False
+
     
     class Meta:
         model = ListItem
-        fields = ['url', 'name', 'description', 'wishlist', 'created_by', 'created_at', 'updated_at', 'upvote_count']
+        fields = ['url', 'name', 'description', 'wishlist', 'created_by', 'created_at', 'updated_at', 'upvote_count', 'can_upvote']
 
 
 class WishlistDetailSerializer(serializers.HyperlinkedModelSerializer):
